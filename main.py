@@ -18,4 +18,6 @@ if __name__ == '__main__':
     app.test_create_smeta()
     time.sleep(1)
 
+    app.print_identifiers()
+
 

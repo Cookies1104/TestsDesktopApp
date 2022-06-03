@@ -42,3 +42,7 @@ class TestMainWindow:
     def menu(self):
         """Подключение к меню главного окна"""
         return self.main_window.GroupBox8
+
+    def print_identifiers(self):
+        """"""
+        return self.main_window.print_control_identifiers()
