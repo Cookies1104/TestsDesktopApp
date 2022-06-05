@@ -2,7 +2,7 @@ import time
 
 from pywinauto import keyboard
 
-from TestsAdeptSmeta.tests.test_folder_in_main_window import TestFolderInMainWindow
+from .test_folder_in_main_window import TestFolderInMainWindow
 
 
 class TestSmetaInMainWindow(TestFolderInMainWindow):

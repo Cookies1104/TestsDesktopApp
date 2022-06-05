@@ -3,13 +3,15 @@ import time
 from pywinauto import Desktop, keyboard
 from pywinauto.application import Application, ProcessNotFoundError
 
+import settings
 
-class TestMainWindow:
+
+class BaseClass:
     """Инициализация приложения. Подключение к основным элементам главного окна."""
-    def __init__(self, path_: str, backend_='uia'):
+    def __init__(self):
         """backend 'win32' для более старых приложений и 'uia' для новее. Адепт смета имеет интерфейс uia"""
-        self.path = path_
-        self.backend = backend_
+        self.path = settings.PATH
+        self.backend = settings.BACKEND
         try:
             self.main_window = self._connect_main_window()
         except ProcessNotFoundError:
@@ -21,9 +23,9 @@ class TestMainWindow:
         """Создание приложения"""
         return Application(backend=self.backend)
 
-    def _create_desktop(self):
-        """Создание окна рабочего стола"""
-        return Desktop(backend=self.backend)
+    # def _create_desktop(self):
+    #     """Создание окна рабочего стола"""
+    #     return Desktop(backend=self.backend)
 
     def _start_main_window(self):
         """Запуск приложения Адепт:УС"""
@@ -31,7 +33,7 @@ class TestMainWindow:
         time.sleep(1)
         keyboard.send_keys('{ENTER}')
 
-    def _connect_main_window(self):
+    def _connect_main_window(self) -> WindowSpecification:
         """Подключение к главному окну"""
         app_ = self._create_app().connect(path=r'{}'.format(self.path), title='Dialog')
         main_window = app_.Dialog
@@ -39,10 +41,16 @@ class TestMainWindow:
         main_window.wait('active')
         return main_window
 
-    def menu(self):
+    def menu(self, path):
         """Подключение к меню главного окна"""
-        return self.main_window.GroupBox8
+        return self.main_window.GroupBox8.menu_select(path)
+
+
+
+    def toolbar(self):
+        """Подключение к панели инструментов главного окна"""
+        return self.main_window.child_window(auto_id="MainWindowUI.centralwidget.mainVerticalSplitter.swTopSmetaAndTree.smetaPage.topHorizontalSplitter.leftTopBox", control_type="Custom")
 
     def print_identifiers(self):
-        """"""
+        """Получение информации о главном окне в нужный момент"""
         return self.main_window.print_control_identifiers()
