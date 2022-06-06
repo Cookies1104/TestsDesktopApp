@@ -1,7 +1,7 @@
 import time
 
 from pywinauto import Desktop, keyboard
-from pywinauto.application import Application, ProcessNotFoundError
+from pywinauto.application import Application, ProcessNotFoundError, WindowSpecification
 
 import settings
 
@@ -44,8 +44,6 @@ class BaseClass:
     def menu(self, path):
         """Подключение к меню главного окна"""
         return self.main_window.GroupBox8.menu_select(path)
-
-
 
     def toolbar(self):
         """Подключение к панели инструментов главного окна"""

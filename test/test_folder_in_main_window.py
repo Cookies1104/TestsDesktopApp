@@ -1,7 +1,8 @@
-import time
 import pytest
 
+from time import sleep
 from pywinauto import keyboard
+from pywinauto.application import WindowSpecification
 
 from .test_main_window import BaseClass
 from settings import TIMEOUT
@@ -13,18 +14,18 @@ class WindowCreateFolder(BaseClass):
     def _launch_window_create_folder_in_main_window(self):
         """Запуск окна 'Создание папки' через главное меню"""
         self.menu('Общее->Создать')
-        time.sleep(TIMEOUT)
+        sleep(TIMEOUT)
         self.main_window.child_window(title="Создать папку", control_type="MenuItem").click_input()
 
     def _launch_window_create_folder_in_toolbar(self):
         """Запуск окна 'Создание папки' через панель инструментов. Нужна доработка."""
         self.main_window.child_window(title="Создать", control_type="Button").click()
-        time.sleep(TIMEOUT)
+        sleep(TIMEOUT)
         keyboard.send_keys('{DOWN} {ENTER}')
 
-    def _connect_window_create_folder(self):
+    def _connect_window_create_folder(self) -> WindowSpecification:
         """Подключение к окну создания папки"""
-        return self._create_app().connect(title='Создание папки').top_window()
+        return self._create_app().connect(title_re='Создание папки').top_window()
 
 
 class TestFolderInMainWindow:
@@ -35,8 +36,8 @@ class TestFolderInMainWindow:
 
     def test_create_folder_in_main_window(self, main_window):
         """Запуск окна 'Создание папки' через главное меню"""
-        main_window._launch_window_create_folder_in_main_window()  # Создаём папку через главное меню
-        time.sleep(TIMEOUT)
+        main_window._launch_window_create_folder_in_main_window()  # Запускаем окно 'Создание папки' через главное меню
+        sleep(TIMEOUT)
         window_create_folder = main_window._connect_window_create_folder()
 
         # Проверки соответствия (можно дополнить)
