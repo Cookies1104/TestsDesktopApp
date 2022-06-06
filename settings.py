@@ -1,6 +1,6 @@
 
 BACKEND = 'uia'
 
-PATH = r'C:\Adept\AUS-client\adept_us.exe'
+PATH = r'D:\Work\sliv 10366\test\AUS-client\adept_us(1686).exe'
 
 TIMEOUT = 0.5

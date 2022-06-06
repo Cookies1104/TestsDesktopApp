@@ -11,7 +11,7 @@ from settings import TIMEOUT
 
 
 def workspace_in_cost_summary(window_cost_summary) -> WindowSpecification:
-    """Подключение к полям для заполнения"""
+    """Подключение к рабочей области окна"""
     return window_cost_summary['Номер:GroupBox2']
 
 
@@ -82,7 +82,7 @@ class TestWindowCostSummary:
         number_field.Edit.type_keys('555')
         sleep(TIMEOUT)
 
-        assert '555' in str(number_field.Edit.wrapper_object())
+        assert '555' == number_field.Edit.wrapper_object().get_value()
 
     def test_positive_entry_for_create_date_field_in_cost_summary(self, window_cost_summary):
         """Позитивная проверка поля 'Дата составления' в окне сводка затрат"""
@@ -91,7 +91,7 @@ class TestWindowCostSummary:
         create_date_field.Edit2.type_keys('10052022')
         sleep(TIMEOUT)
 
-        assert '10.05.2022' in str(create_date_field.Edit2.wrapper_object())
+        assert '10.05.2022' == create_date_field.Edit2.wrapper_object().get_value()
 
     def test_positive_entry_for_situation_field_in_cost_summary(self, window_cost_summary):
         """Позитивная проверка поля 'Составлена в ценах по состоянию на' в окне сводка затрат"""
@@ -100,6 +100,24 @@ class TestWindowCostSummary:
         situation_field.Edit3.type_keys('Текущий момент', with_spaces=True)
         sleep(TIMEOUT)
 
-        assert 'Текущий момент' in str(situation_field.Edit3.wrapper_object())
+        assert 'Текущий момент' == situation_field.Edit3.wrapper_object().get_value()
+
+    def test_positive_entry_for_object_field_in_cost_summary(self, window_cost_summary):
+        """Позитивная проверка поля 'Объект' в окне сводка затрат"""
+        object_field = workspace_in_cost_summary(window_cost_summary)
+        utils.clear_field(object_field.Edit4)
+        object_field.Edit4.type_keys('Объект', with_spaces=True)
+        sleep(TIMEOUT)
+
+        assert 'Объект' == object_field.Edit4.wrapper_object().get_value()
+
+    def test_positive_entry_for_customer_field_in_cost_summary(self, window_cost_summary):
+        """Позитивная проверка поля 'Заказчик' в окне сводка затрат"""
+        customer_field = workspace_in_cost_summary(window_cost_summary)
+        utils.clear_field(customer_field.Edit5)
+        customer_field.Edit5.type_keys('Заказчик', with_spaces=True)
+        sleep(TIMEOUT)
+
+        assert 'Заказчик' == customer_field.Edit5.wrapper_object().get_value()
 
 

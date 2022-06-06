@@ -51,7 +51,8 @@ class BaseClass:
 
     def _connect_window(self, name_window: str) -> WindowSpecification:
         """Подключение к окну"""
-        return self._create_app().connect(title_re=f'{name_window}').top_window()
+        time.sleep(settings.TIMEOUT)
+        return self._create_app().connect(title=f'{name_window}').top_window()
 
 
     def print_identifiers(self):
