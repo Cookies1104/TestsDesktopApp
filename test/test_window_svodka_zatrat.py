@@ -1,7 +1,7 @@
 import pytest
 
 from time import sleep
-from pywinauto.application import WindowSpecification
+from pywinauto import WindowSpecification
 
 from .test_main_window import BaseClass
 from .test_folder_in_main_window import WindowCreateFolder
@@ -9,33 +9,43 @@ from settings import TIMEOUT
 from utils import close_window
 
 
-class WindowSvodkaZatrat(BaseClass, WindowCreateFolder):
-    """Окно сводка затрат. Запуск, удаление, изменение, подключение."""
-    def _launch_window_svodka_zatrat_in_main_window(self):
-        """Запуск окна 'Сводка затрат' через главное меню"""
-        self.menu('Общее->Создать')
+class WindowSvodkaZatrat(WindowCreateFolder):
+    """РћРєРЅРѕ СЃРІР°РѕРґРєР° Р·Р°С‚СЂР°С‚. Р—Р°РїСѓСЃРє, СѓРґР°Р»РµРЅРёРµ, РёР·РјРµРЅРµРЅРёРµ, РїРѕРґРєР»СЋС‡РµРЅРёРµ."""
+    def launch_window_svodka_zatrat_in_main_window(self):
+        """Р—Р°РїСѓСЃРє РѕРєРЅР° 'РЎРІРѕРґРєР° Р·Р°С‚СЂР°С‚' С‡РµСЂРµР· РіР»Р°РІРЅРѕРµ РјРµРЅСЋ"""
+        self._menu('РћР±С‰РµРµ->РЎРѕР·РґР°С‚СЊ')
         sleep(TIMEOUT)
-        self.main_window.child_window(title="Создать сваодку затрат", control_type="MenuItem").click_input()
+        self.main_window.child_window(title="РЎРѕР·РґР°С‚СЊ СЃРІРѕРґРєСѓ Р·Р°С‚СЂР°С‚", control_type="MenuItem").click_input()
 
-    def _connect_window_svodka_zatrat(self) -> WindowSpecification:
-        """Подключение к окну сводка затрат"""
-        return self._create_app().connect(title_re='Сводка затрат').top_window()
+    def connect_window_svodka_zatrat(self) -> WindowSpecification:
+        """РџРѕРґРєР»СЋС‡РµРЅРёРµ Рє РѕРєРЅСѓ СЃРІРѕРґРєР° Р·Р°С‚СЂР°С‚"""
+        return self._connect_window(name_window='РЎРІРѕРґРєР° Р·Р°С‚СЂР°С‚')
 
 
 class TestSvodkaZatratInMainWindow:
-    """Функциональные тесты папки в главном окне"""
+    """Р¤СѓРЅРєС†РёРѕРЅР°Р»СЊРЅС‹Рµ С‚РµСЃС‚С‹ Р·Р°РїСѓСЃРєР° РѕРєРЅР° СЃРІРѕРґРєР° Р·Р°С‚СЂР°С‚ РІ РіР»Р°РІРЅРѕРј РѕРєРЅРµ"""
     @pytest.fixture()
     def main_window(self):
         return WindowSvodkaZatrat()
 
     def test_launch_window_svodka_zatrat_in_main_window(self, main_window):
-        """Запуск окна 'Сводка затрат' через главное меню"""
-        main_window._launch_window_svodka_zatrat_in_main_window()  # Запускаем окно 'Сводка затрат' через главное меню
+        """Р—Р°РїСѓСЃРє РѕРєРЅР° 'РЎРІРѕРґРєР° Р·Р°С‚СЂР°С‚' С‡РµСЂРµР· РіР»Р°РІРЅРѕРµ РјРµРЅСЋ"""
+        main_window.launch_window_svodka_zatrat_in_main_window()
         sleep(TIMEOUT)
-        window_svodka_zatrat = main_window._connect_window_svodka_zatrat()
+        window_svodka_zatrat = main_window.connect_window_svodka_zatrat()
 
-        assert 'Сводка затрат' in str(window_svodka_zatrat.wrapper_object())
-        assert  window_svodka_zatrat.exists()
+        assert 'РЎРІРѕРґРєР° Р·Р°С‚СЂР°С‚' in str(window_svodka_zatrat.wrapper_object())
+        assert window_svodka_zatrat.exists()
 
         close_window(window_svodka_zatrat)
+
+    def test_launch_window_svodka_zatrat_in_toolbar(self, main_window):
+        """Р—Р°РїСѓСЃРє РѕРєРЅР° 'РЎРІРѕРґРєР° Р·Р°С‚СЂР°С‚' С‡РµСЂРµР· РїР°РЅРµР»СЊ РёРЅСЃС‚СЂСѓРјРµРЅС‚РѕРІ"""
+        pass
+
+    def test_launch_window_svodka_zatrat_in_tree_toolbar(self, main_window):
+        """Р—Р°РїСѓСЃРє РѕРєРЅР° 'РЎРІРѕРґРєР° Р·Р°С‚СЂР°С‚' С‡РµСЂРµР· РґРµСЂРµРІРѕ РЅР° РїР°РЅРµР»Рё РёРЅСЃС‚СЂСѓРјРµРЅС‚РѕРІ"""
+        pass
+
+
 

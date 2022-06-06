@@ -1,27 +1,39 @@
-import time
+import pytest
 
-from pywinauto import keyboard
+from time import sleep
+from pywinauto import keyboard, WindowSpecification
 
-from .test_folder_in_main_window import TestFolderInMainWindow
+from .test_folder_in_main_window import WindowCreateFolder
+from settings import TIMEOUT
+from utils import close_window
 
 
-class TestSmetaInMainWindow(TestFolderInMainWindow):
-    """Функциональные тесты сметы в главном окне"""
+class WindowLocalSmeta(WindowCreateFolder):
+    """Окно локальная смета. Запуск, удаление, изменение, подключение."""
+    def launch_window_local_smeta_in_main_window(self):
+        """Запуск окна 'Сводка затрат' через главное меню"""
+        self._menu('Общее->Создать')
+        sleep(TIMEOUT)
+        self.main_window.child_window(title="Создать смету", control_type="MenuItem").click_input()
 
-    def _window_create_smeta(self):
-        """Окно создания сметы"""
-        return self._create_app().connect(title='Локальная смета').top_window()
+    def connect_window_local_smeta(self) -> WindowSpecification:
+        """Подключение к окну сводка затрат"""
+        return self._connect_window(name_window='Локальная смета')
 
-    def _test_launch_window_create_smeta(self):
-        """Проверка открытия окна 'Локальная смета'"""
-        self.menu().menu_select('Общее->Создать')
-        time.sleep(0.5)
-        keyboard.send_keys('{DOWN} {DOWN} {DOWN} {DOWN} {ENTER}')
 
-    def test_create_smeta(self):
+class TestLocalSmetaInMainWindow:
+    """Функциональные тесты запуска окна локальной сметы в главном окне"""
+    @pytest.fixture()
+    def main_window(self):
+        return WindowLocalSmeta()
+
+    def test_launch_window_local_smeta_in_main_window(self, main_window):
         """Проверка создания сметы"""
-        self._test_launch_window_create_smeta()
+        main_window.launch_window_local_smeta_in_main_window()
+        sleep(TIMEOUT)
+        window_local_smeta = main_window.connect_window_local_smeta()
 
-        window_create_smeta = self._window_create_smeta()
-        window_create_smeta['Наименование сметы:Edit'].type_keys('Смета №1')
-        window_create_smeta.child_window(title="Создать", control_type="Button").wrapper_object().click()
+        assert 'Локальная смета' in str(window_local_smeta.wrapper_object())
+        assert window_local_smeta.exists()
+
+        close_window(window_local_smeta)

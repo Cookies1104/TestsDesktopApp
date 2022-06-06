@@ -41,13 +41,18 @@ class BaseClass:
         main_window.wait('active')
         return main_window
 
-    def menu(self, path):
+    def _menu(self, path: str) -> None:
         """Подключение к меню главного окна"""
-        return self.main_window.GroupBox8.menu_select(path)
+        self.main_window.GroupBox8.menu_select(path)
 
     def toolbar(self):
         """Подключение к панели инструментов главного окна"""
         return self.main_window.child_window(auto_id="MainWindowUI.centralwidget.mainVerticalSplitter.swTopSmetaAndTree.smetaPage.topHorizontalSplitter.leftTopBox", control_type="Custom")
+
+    def _connect_window(self, name_window: str) -> WindowSpecification:
+        """Подключение к окну"""
+        return self._create_app().connect(title_re=f'{name_window}').top_window()
+
 
     def print_identifiers(self):
         """Получение информации о главном окне в нужный момент"""
