@@ -70,7 +70,7 @@ class TestWindowCostSummary:
     def connect_entry_field(field_id: str, window: WindowSpecification, text: str):
         workspace = workspace_in_cost_summary(window)
         field = workspace[f'{field_id}']
-        utils.clear_field(field)
+        utils.clear_edit_field(field)
         field.type_keys(f'{text}')
         sleep(TIMEOUT)
         return field
@@ -78,46 +78,46 @@ class TestWindowCostSummary:
     def test_positive_entry_for_number_field_in_cost_summary(self, window_cost_summary):
         """Позитивная проверка поля 'Номер' в окне сводка затрат"""
         number_field = workspace_in_cost_summary(window_cost_summary)
-        utils.clear_field(number_field.Edit)
+        utils.clear_edit_field(number_field.Edit)
         number_field.Edit.type_keys('555')
         sleep(TIMEOUT)
 
-        assert '555' == number_field.Edit.wrapper_object().get_value()
+        assert '555' == utils.get_text_for_edit_field(number_field.Edit)
 
     def test_positive_entry_for_create_date_field_in_cost_summary(self, window_cost_summary):
         """Позитивная проверка поля 'Дата составления' в окне сводка затрат"""
         create_date_field = workspace_in_cost_summary(window_cost_summary)
-        utils.clear_field(create_date_field.Edit2)
+        utils.clear_edit_field(create_date_field.Edit2)
         create_date_field.Edit2.type_keys('10052022')
         sleep(TIMEOUT)
 
-        assert '10.05.2022' == create_date_field.Edit2.wrapper_object().get_value()
+        assert '10.05.2022' == utils.get_text_for_edit_field(create_date_field.Edit2)
 
     def test_positive_entry_for_situation_field_in_cost_summary(self, window_cost_summary):
         """Позитивная проверка поля 'Составлена в ценах по состоянию на' в окне сводка затрат"""
         situation_field = workspace_in_cost_summary(window_cost_summary)
-        utils.clear_field(situation_field.Edit3)
+        utils.clear_edit_field(situation_field.Edit3)
         situation_field.Edit3.type_keys('Текущий момент', with_spaces=True)
         sleep(TIMEOUT)
 
-        assert 'Текущий момент' == situation_field.Edit3.wrapper_object().get_value()
+        assert 'Текущий момент' == utils.get_text_for_edit_field(situation_field.Edit3)
 
     def test_positive_entry_for_object_field_in_cost_summary(self, window_cost_summary):
         """Позитивная проверка поля 'Объект' в окне сводка затрат"""
         object_field = workspace_in_cost_summary(window_cost_summary)
-        utils.clear_field(object_field.Edit4)
+        utils.clear_edit_field(object_field.Edit4)
         object_field.Edit4.type_keys('Объект', with_spaces=True)
         sleep(TIMEOUT)
 
-        assert 'Объект' == object_field.Edit4.wrapper_object().get_value()
+        assert 'Объект' == utils.get_text_for_edit_field(object_field.Edit4)
 
     def test_positive_entry_for_customer_field_in_cost_summary(self, window_cost_summary):
         """Позитивная проверка поля 'Заказчик' в окне сводка затрат"""
         customer_field = workspace_in_cost_summary(window_cost_summary)
-        utils.clear_field(customer_field.Edit5)
+        utils.clear_edit_field(customer_field.Edit5)
         customer_field.Edit5.type_keys('Заказчик', with_spaces=True)
         sleep(TIMEOUT)
 
-        assert 'Заказчик' == customer_field.Edit5.wrapper_object().get_value()
+        assert 'Заказчик' == utils.get_text_for_edit_field(customer_field.Edit5)
 
 
