@@ -43,7 +43,10 @@ class BaseClass:
 
     def _menu(self, path: str) -> None:
         """Подключение к меню главного окна"""
-        self.main_window.GroupBox8.menu_select(path)
+        try:
+            self.main_window.GroupBox8.menu_select(path)
+        except:
+            self.main_window.GroupBox12.menu_select(path)
 
     def toolbar(self):
         """Подключение к панели инструментов главного окна"""
@@ -53,7 +56,6 @@ class BaseClass:
         """Подключение к окну"""
         time.sleep(settings.TIMEOUT)
         return self._create_app().connect(title=f'{name_window}').top_window()
-
 
     def print_identifiers(self):
         """Получение информации о главном окне в нужный момент"""
