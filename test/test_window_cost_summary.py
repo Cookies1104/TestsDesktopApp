@@ -57,14 +57,25 @@ class TestWindowCostSummary:
     """Функциональные тесты"""
 
     @pytest.fixture(scope='class')
-    def workspace(self):
+    def window_cost_summary(self):
         """Предусловия для тестов в классе"""
-        main_window = WindowCostSummary()  # используем класс для запуска нужных окон
-        main_window.launch_window_cost_summary_in_main_window()  # запуск окна сводка затрат
-        window_cost_summary = main_window.connect_window_cost_summary()  # подключение к окну
+        main_window = WindowCostSummary()
+        main_window.launch_window_cost_summary_in_main_window()
+        window_cost_summary = main_window.connect_window_cost_summary()
+        yield window_cost_summary
+        utils.close_window(window_cost_summary)  # закрытие окна
+
+    @pytest.fixture(scope='class')
+    def workspace(self, window_cost_summary):
+        """Предусловия для тестов в классе"""
         workspace = workspace_in_cost_summary(window_cost_summary)
         yield workspace
-        utils.close_window(window_cost_summary)  # закрытие окна
+
+    @pytest.fixture(scope='class')
+    def workspace_signatures(self, window_cost_summary):
+        """"""
+        # workspace_signatures =
+        pass
 
     @staticmethod
     def connect_entry_field(field_id: str, window: WindowSpecification, text: str):
@@ -129,7 +140,7 @@ class TestWindowCostSummary:
         workspace.Edit7.type_keys('приказ', with_spaces=True)
         sleep(TIMEOUT)
 
-        assert 'приказ' == utils.get_text_for_edit_field(workspace.Edit6)
+        assert 'приказ' == utils.get_text_for_edit_field(workspace.Edit7)
 
     def test_positive_entry_for_rounding_of_values_field_in_cost_summary(self, workspace):
         """Позитивная проверка поля 'Округление стоимостей до' в окне сводка затрат"""
@@ -148,6 +159,29 @@ class TestWindowCostSummary:
         list_item = [['0'], ['1'], ['2'], ['3'], ['4'], ['5']]
 
         assert list_item == workspace.ListBox2.wrapper_object().texts()
+
+    def test_list_elements_in_window_cost_summary(self, window_cost_summary):
+        """Проверка списка элементов в окне сводка затрат"""
+        element_list = [['Общие'], ['Подписи']]
+
+        assert element_list == window_cost_summary.ListBox3.wrapper_object().texts()
+
+    def test_transition_entry_for_signatures_field_in_cost_summary(self, window_cost_summary):
+        """Проверка перехода в раздел "Подписи" в окне сводка затрат"""
+        window_cost_summary.child_window(title="Подписи", control_type="ListItem").click_input()
+        sleep(0.5)
+        auto_id = window_cost_summary.child_window(auto_id="AdeptDialog.AdeptDialogFrame", control_type="Custom")
+
+        assert 'AdeptDialog.AdeptDialogFrame' == auto_id.wrapper_object().automation_id()
+
+    def test_select_signatures_from_our_organization_in_cost_summery(self, window_cost_summary):
+        """Проверка выбора строки подписи от нашей организации в разделе "Подписи" """
+        window_cost_summary.child_window(title="Подписи", control_type="ListItem").click_input()
+        sleep(1)
+        window_cost_summary.child_window(title="Добавить", control_type="Button").parent().parent().print_control_identifiers()
+        print(window_cost_summary.child_window(title="Подписи от нашей организации"))
+
+
 
 
 

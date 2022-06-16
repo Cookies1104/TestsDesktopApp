@@ -37,16 +37,13 @@ class BaseClass:
         """Подключение к главному окну"""
         app_ = self._create_app().connect(path=r'{}'.format(self.path), title='Dialog')
         main_window = app_.Dialog
-        main_window.set_focus()
-        main_window.wait('active')
+        # main_window.set_focus()
+        # main_window.wait('active')
         return main_window
 
     def _menu(self, path: str) -> None:
         """Подключение к меню главного окна"""
-        try:
-            self.main_window.GroupBox8.menu_select(path)
-        except:
-            self.main_window.GroupBox12.menu_select(path)
+        self.main_window.child_window(title='Общее').parent().parent().menu_select(path)
 
     def toolbar(self):
         """Подключение к панели инструментов главного окна"""
