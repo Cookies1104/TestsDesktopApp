@@ -2,6 +2,7 @@ import time
 from abc import ABC, abstractmethod
 from pywinauto import WindowSpecification, Application
 from pywinauto.application import ProcessNotFoundError
+from pywinauto.controls.uia_controls import EditWrapper
 from pywinauto.findwindows import ElementNotFoundError
 
 from framework.service.elements import statusbar, titlebar
@@ -58,12 +59,12 @@ class WindowInterface(ABC):
         window.wait('ready')
         return window
 
-    def close_current_window(self):
+    def close_current_window(self) -> None:
         """Закрытие текущего (верхнего) окна как процесс в windows.
         Не работает для самого приложения."""
         self.top_window_().close()
 
-    def close_app(self):
+    def close_app(self) -> None:
         """Закрытие приложения"""
         while True:
             try:
@@ -74,17 +75,15 @@ class WindowInterface(ABC):
                 break
 
     @staticmethod
-    def clear_edit_field(field: WindowSpecification) -> None:
+    def clear_edit_field(field: EditWrapper) -> None:
         """Очистка текстового (даты) поля"""
-        field.type_keys('^a')
-        time.sleep(0.2)
-        field.type_keys('{DEL}')
+        field.set_text('')
 
     def get_edit_field(self, name_field: str):
         """Возвращает редактируемое поле"""
         return self.top_window_()[name_field]
 
     @staticmethod
-    def get_text_for_edit_field(field: WindowSpecification) -> str:
+    def get_text_for_edit_field(field: EditWrapper) -> str:
         """Получение значения в текстовом поле"""
         return field.get_value()
