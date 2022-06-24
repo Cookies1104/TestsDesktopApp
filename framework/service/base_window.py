@@ -1,3 +1,4 @@
+import time
 from abc import ABC, abstractmethod
 from pywinauto import WindowSpecification, Application
 from pywinauto.application import ProcessNotFoundError
@@ -75,7 +76,13 @@ class WindowInterface(ABC):
     @staticmethod
     def clear_edit_field(field: WindowSpecification) -> None:
         """Очистка текстового (даты) поля"""
-        field.type_keys('{HOME} ^a {DEL}')
+        field.type_keys('^a')
+        time.sleep(0.2)
+        field.type_keys('{DEL}')
+
+    def get_edit_field(self, name_field: str):
+        """Возвращает редактируемое поле"""
+        return self.top_window_()[name_field]
 
     @staticmethod
     def get_text_for_edit_field(field: WindowSpecification) -> str:

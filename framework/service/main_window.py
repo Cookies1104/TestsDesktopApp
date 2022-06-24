@@ -37,7 +37,7 @@ class MainWindow(WindowInterface):
     def __launch_window_in_menu(self) -> WindowSpecification:
         """Запуск окна (любого) через главное меню"""
         self.menu().menu_select('Общее->Создать')
-        time.sleep(self.timeout * 2)
+        time.sleep(self.timeout / 2)
         return self.__main_window()
 
     def __launch_window_in_toolbar(self) -> WindowSpecification:
