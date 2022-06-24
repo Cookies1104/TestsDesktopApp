@@ -1,7 +1,7 @@
 import time
 import pytest
 from pywinauto import ElementNotFoundError
-from pywinauto.controls.uia_controls import EditWrapper
+from pywinauto.controls.uia_controls import EditWrapper, ListItemWrapper
 
 from framework.service.window_cost_summary import CostSummary
 
@@ -36,6 +36,8 @@ class TestWindowCostSummary:
         field: EditWrapper = window_cost_summary_in_menu.get_edit_field(name_field)
         field.set_text(text)
 
+        assert field.is_visible(), text_error + '. Не видно'
+        assert field.is_editable(), text_error + '. Не редактируется'
         assert text == field.get_value(), text_error
 
     @pytest.mark.positive
@@ -55,6 +57,11 @@ class TestWindowCostSummary:
 
         text_error = 'Позитивный тест выпадающего списка "Округление ' \
                      'стоимостей до" в окне "Сводка затрат"'
+
+        assert combobox.is_visible(),\
+            text_error + '. Не видно'
+        assert not combobox.is_editable(),\
+            text_error + '. Является редактируемым клавиатурой (не правильно)'
         assert value_ == combobox.selected_text(),\
             text_error + '. Не удалось установить значение'
         assert CostSummary.list_rounding_of_values == combobox.texts(),\
@@ -66,6 +73,26 @@ class TestWindowCostSummary:
         text_error = 'Элементы в окне "Сводка затрат" не соответствуют'
         assert window_cost_summary_in_menu.get_elements().texts() == CostSummary.list_elements,\
             text_error
+
+    @pytest.mark.positive
+    @pytest.mark.parametrize(
+        'element',
+        [
+            CostSummary.element_general,
+            CostSummary.element_signatures
+        ],
+    )
+    def test_element_in_window_cost_summary(self, window_cost_summary_in_menu, element):
+        """Тест элементов в окне 'Сводка затрат'"""
+        element_window: ListItemWrapper = window_cost_summary_in_menu.top_window_(
+            ).child_window(**element)
+
+        text_error = f'Элемент {element["title"]} в окне "Сводка затрат" '
+        element_window.select()
+        assert element_window.is_visible(), text_error + 'не виден'
+        assert element_window.is_selected(), text_error + 'не возможно выбрать'
+        assert element_window.is_keyboard_focusable(), text_error + 'не возможно выбрать' \
+                                                                    'клавиатурой'
 
     @pytest.mark.positive
     def test_transition_in_signatures_section_in_window_cost_summary(
@@ -85,7 +112,7 @@ class TestWindowCostSummary:
             (CostSummary.button_clear, CostSummary.button_clear['title']),
         ]
     )
-    def test_buttons_in_signatures_section_in_cost_summary(
+    def test_buttons_in_signatures_section_in_window_cost_summary(
             self, signatures_section_in_window_cost_summary, identifier, name
     ):
         """Тест кнопок рабочего пространства раздела 'Подписи' окна 'Сводка затрат'"""
@@ -99,4 +126,11 @@ class TestWindowCostSummary:
         assert button.window_text() == name, f'Текст кнопки {name} раздела "Подписи" в окне' \
                                              f'"Сводка затрат" не соответствует'
 
+    @pytest.mark.positive
+    def test_roots_tree_in_signatures_section_in_window_cost_summary(
+            self, signatures_section_in_window_cost_summary
+    ):
+        """Тест корневых элементов дерева в workspace раздела 'Подписи' в окне 'Сводка затрат'"""
+        tree = signatures_section_in_window_cost_summary.get_tree_for_workspace_signatures()
 
+        assert tree.roots()

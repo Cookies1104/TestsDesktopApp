@@ -1,8 +1,7 @@
-import time
 from abc import ABC, abstractmethod
 from pywinauto import WindowSpecification, Application
 from pywinauto.application import ProcessNotFoundError
-from pywinauto.controls.uia_controls import EditWrapper
+from pywinauto.controls.uia_controls import EditWrapper, ListItemWrapper
 from pywinauto.findwindows import ElementNotFoundError
 
 from framework.service.elements import statusbar, titlebar
@@ -79,8 +78,8 @@ class WindowInterface(ABC):
         """Очистка текстового (даты) поля"""
         field.set_text('')
 
-    def get_edit_field(self, name_field: str):
-        """Возвращает редактируемое поле"""
+    def get_edit_field(self, name_field: str) -> EditWrapper:
+        """Возвращает редактируемое поле EditWrapper"""
         return self.top_window_()[name_field]
 
     @staticmethod

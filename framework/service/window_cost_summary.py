@@ -1,5 +1,5 @@
 from pywinauto.controls.uia_controls import ComboBoxWrapper, ListItemWrapper, \
-    ListViewWrapper
+    ListViewWrapper, TreeViewWrapper
 from pywinauto.controls.uiawrapper import UIAWrapper
 from pywinauto import WindowSpecification
 
@@ -27,6 +27,8 @@ class CostSummary(WindowInterface):
     # ----------------------------------------------------------------------------------------------
     # Общие идентификаторы для всех разделов в окне "Сводка затрат"
     list_elements = [['Общие'], ['Подписи']]
+    element_general = {'title': 'Общие', 'control_type': 'ListItem'}
+    element_signatures = {'title': 'Подписи', 'control_type': 'ListItem'}
     # ----------------------------------------------------------------------------------------------
     # Идентификаторы для раздела "Общие" в окне "Сводка затрат"
     field_number = 'Номер:Edit'
@@ -49,6 +51,7 @@ class CostSummary(WindowInterface):
     button_save_signatures = {'title': 'Сохранить', 'control_type': 'Button'}
     button_download = {'title': 'Загрузить', 'control_type': 'Button'}
     button_clear = {'title': 'Очистить', 'control_type': 'Button'}
+    tree_for_workspace_signatures = 'Сводка затратTreeView'
 
     def __init__(self):
         super(CostSummary, self).__init__(
@@ -70,11 +73,11 @@ class CostSummary(WindowInterface):
 
     def get_element_general(self) -> ListItemWrapper:
         """Возвращает элемент 'Общие' (кликабелен)"""
-        return self.get_elements().child_window(title="Общие", control_type="ListItem")
+        return self.get_elements().child_window(**CostSummary.element_general)
 
     def get_element_signatures(self) -> ListItemWrapper:
         """Возвращает элемент 'Подписи' (кликабелен)"""
-        return self.get_elements().child_window(title="Подписи", control_type="ListItem")
+        return self.get_elements().child_window(**CostSummary.element_signatures)
 
     # ----------------------------------------------------------------------------------------------
     # Методы для работы с разделом "Общие" в окне "Сводка затрат"
@@ -89,5 +92,9 @@ class CostSummary(WindowInterface):
     # -------------------------------------------------------------------.---------------------------
     # Методы для работы с разделом "Подписи" в окне "Сводка затрат"
     def get_workspace_signatures(self) -> UIAWrapper | WindowSpecification:
-        """Возвращает кнопки для workspace раздела подписи"""
+        """Возвращает workspace раздела подписи"""
         return self.top_window_()['Сводка затратGroupBox4']
+
+    def get_tree_for_workspace_signatures(self) -> TreeViewWrapper:
+        """Возвращает дерево workspace раздела подписи"""
+        return self.top_window_()[CostSummary.tree_for_workspace_signatures]
