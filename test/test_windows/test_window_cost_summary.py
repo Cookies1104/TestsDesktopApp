@@ -1,5 +1,6 @@
 import time
 import pytest
+from pywinauto import ElementNotFoundError
 from pywinauto.controls.uia_controls import EditWrapper
 
 from framework.service.window_cost_summary import CostSummary
@@ -28,8 +29,9 @@ class TestWindowCostSummary:
                                                             ' "Сводка затрат"'),
         ]
     )
-    def test_positive_entry_for_fields_in_cost_summary(self, window_cost_summary_in_menu,
-                                                       name_field, text, text_error):
+    def test_positive_entry_for_fields_in_window_cost_summary(
+            self, window_cost_summary_in_menu, name_field, text, text_error,
+    ):
         """Позитивный тест текстовых полей в окне сводка затрат"""
         field: EditWrapper = window_cost_summary_in_menu.get_edit_field(name_field)
         field.set_text(text)
@@ -37,7 +39,7 @@ class TestWindowCostSummary:
         assert text == field.get_value(), text_error
 
     @pytest.mark.positive
-    def test_positive_entry_for_rounding_of_values_field_in_cost_summary(
+    def test_positive_entry_for_rounding_of_values_field_in_window_cost_summary(
             self, window_cost_summary_in_menu
     ):
         """Позитивный тест выпадающего списка "Округление стоимостей до"
@@ -60,18 +62,41 @@ class TestWindowCostSummary:
 
     @pytest.mark.postive
     def test_elements_in_window_cost_summary(self, window_cost_summary_in_menu):
-        """Позитивный тест списка элементов в окне 'Сводка затрат'"""
+        """Тест списка элементов в окне 'Сводка затрат'"""
         text_error = 'Элементы в окне "Сводка затрат" не соответствуют'
         assert window_cost_summary_in_menu.get_elements().texts() == CostSummary.list_elements,\
             text_error
 
     @pytest.mark.positive
-    def test_transition_in_signatures_section_in_cost_summary(self, window_cost_summary_in_menu):
-        """Позитивный тест перехода в раздел 'Подписи' в окне 'Сводка затрат'."""
-        window_cost_summary_in_menu.get_element_signatures().click_input()
-        auto_id = window_cost_summary_in_menu.get_workspace_signatures()
-
-        assert "AdeptDialog.AdeptDialogFrame" == auto_id.automation_id(), \
+    def test_transition_in_signatures_section_in_window_cost_summary(
+            self, signatures_section_in_window_cost_summary
+    ):
+        """Тест перехода в раздел 'Подписи' в окне 'Сводка затрат'."""
+        assert signatures_section_in_window_cost_summary.get_workspace_signatures(), \
             'Переключение в окно "Подписи" в окне "Сводка затрат" не произошло'
+
+    @pytest.mark.positive
+    @pytest.mark.parametrize(
+        'identifier,name', [
+            (CostSummary.button_add, CostSummary.button_add['title']),
+            (CostSummary.button_del, CostSummary.button_del['title']),
+            (CostSummary.button_save_signatures, CostSummary.button_save_signatures['title']),
+            (CostSummary.button_download, CostSummary.button_download['title']),
+            (CostSummary.button_clear, CostSummary.button_clear['title']),
+        ]
+    )
+    def test_buttons_in_signatures_section_in_cost_summary(
+            self, signatures_section_in_window_cost_summary, identifier, name
+    ):
+        """Тест кнопок рабочего пространства раздела 'Подписи' окна 'Сводка затрат'"""
+        workspace = signatures_section_in_window_cost_summary.get_workspace_signatures()
+        try:
+            button = workspace.child_window(**identifier)
+        except ElementNotFoundError:
+            button = None
+        assert button, f'Кнопка {name} не существует раздела "Подписи" в окне "Сводка затрат" не ' \
+                       f'существует'
+        assert button.window_text() == name, f'Текст кнопки {name} раздела "Подписи" в окне' \
+                                             f'"Сводка затрат" не соответствует'
 
 

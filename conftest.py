@@ -52,3 +52,11 @@ def window_cost_summary_in_toolbar(main_window) -> CostSummary:
     time.sleep(TIMEOUT)
     window = CostSummary()
     return window
+
+
+@pytest.fixture(scope='class')
+def signatures_section_in_window_cost_summary(window_cost_summary_in_menu) -> CostSummary:
+    """Переход в раздел 'Подписи' в окне 'Сводка затрат'"""
+    window_cost_summary_in_menu.get_element_signatures().click_input()
+    return window_cost_summary_in_menu
+

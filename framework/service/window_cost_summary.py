@@ -1,6 +1,7 @@
 from pywinauto.controls.uia_controls import ComboBoxWrapper, ListItemWrapper, \
     ListViewWrapper
 from pywinauto.controls.uiawrapper import UIAWrapper
+from pywinauto import WindowSpecification
 
 from .base_window import WindowInterface
 from .elements import statusbar, titlebar
@@ -23,6 +24,11 @@ list_rounding_of_values = ['0', '1', '2', '3', '4', '5']
 class CostSummary(WindowInterface):
     """Элементы окна 'Сводка затрат'."""
     # идентификаторы полей
+    # ----------------------------------------------------------------------------------------------
+    # Общие идентификаторы для всех разделов в окне "Сводка затрат"
+    list_elements = [['Общие'], ['Подписи']]
+    # ----------------------------------------------------------------------------------------------
+    # Идентификаторы для раздела "Общие" в окне "Сводка затрат"
     field_number = 'Номер:Edit'
     field_create_date = 'Дата составления:Edit'
     field_situation = 'Составлена в ценах по состоянию на:Edit'
@@ -30,11 +36,19 @@ class CostSummary(WindowInterface):
     field_customer = 'Заказчик:Edit'
     field_approved = 'Утверждена:Edit'
     field_approval_document = 'Документ об утверждении:Edit'
-
     combobox_customer = 'Заказчик:ComboBox'
     combobox_rounding_of_values = 'Округление стоимостей доComboBox'
     list_rounding_of_values = ['0', '1', '2', '3', '4', '5']
-    list_elements = [['Общие'], ['Подписи']]
+    # ----------------------------------------------------------------------------------------------
+    # Идентификаторы для раздела "Подписи" в окне "Сводка затрат"
+    list_buttons_in_workspace_signatures = [
+        '', 'Добавить', 'Удалить', 'Сохранить', 'Загрузить', 'Очистить'
+    ]
+    button_add = {'title': 'Добавить', 'control_type': 'Button'}
+    button_del = {'title': 'Удалить', 'control_type': 'Button'}
+    button_save_signatures = {'title': 'Сохранить', 'control_type': 'Button'}
+    button_download = {'title': 'Загрузить', 'control_type': 'Button'}
+    button_clear = {'title': 'Очистить', 'control_type': 'Button'}
 
     def __init__(self):
         super(CostSummary, self).__init__(
@@ -42,9 +56,13 @@ class CostSummary(WindowInterface):
             statusbar_=statusbar.DefaultStatusbar(),
             )
 
-    def get_combobox_rounding_of_values(self) -> ComboBoxWrapper:
-        """Возвращает выпадающий список Округление стоимостей до"""
-        return self.top_window_()[combobox_rounding_of_values]
+    # ----------------------------------------------------------------------------------------------
+    # Общие методы для всех разделов в окне "Сводка затрат"
+    def titlebar(self):
+        pass
+
+    def statusbar(self):
+        pass
 
     def get_elements(self) -> ListViewWrapper:
         """Возвращает окно элементов"""
@@ -52,23 +70,24 @@ class CostSummary(WindowInterface):
 
     def get_element_general(self) -> ListItemWrapper:
         """Возвращает элемент 'Общие' (кликабелен)"""
-        return self.top_window_().child_window(title="Общие", control_type="ListItem")
-
-    def get_workspace_general(self) -> UIAWrapper:
-        """Возвращает workspace для окна общие"""
-        return self.top_window_().child_window(title="Номер:", control_type="Text").parent()
+        return self.get_elements().child_window(title="Общие", control_type="ListItem")
 
     def get_element_signatures(self) -> ListItemWrapper:
         """Возвращает элемент 'Подписи' (кликабелен)"""
-        return self.top_window_().child_window(title="Подписи", control_type="ListItem")
+        return self.get_elements().child_window(title="Подписи", control_type="ListItem")
 
-    def get_workspace_signatures(self) -> UIAWrapper:
-        """Возвращает workspace для окна подписи"""
-        return self.top_window_().child_window(
-            auto_id="AdeptDialog.AdeptDialogFrame", control_type="Custom")
+    # ----------------------------------------------------------------------------------------------
+    # Методы для работы с разделом "Общие" в окне "Сводка затрат"
+    def get_combobox_rounding_of_values(self) -> ComboBoxWrapper:
+        """Возвращает выпадающий список Округление стоимостей до"""
+        return self.top_window_()[combobox_rounding_of_values]
 
-    def titlebar(self):
-        pass
+    def get_workspace_general(self) -> UIAWrapper | WindowSpecification:
+        """Возвращает workspace для раздела общие"""
+        return self.top_window_().child_window(title="Номер:", control_type="Text").parent()
 
-    def statusbar(self):
-        pass
+    # -------------------------------------------------------------------.---------------------------
+    # Методы для работы с разделом "Подписи" в окне "Сводка затрат"
+    def get_workspace_signatures(self) -> UIAWrapper | WindowSpecification:
+        """Возвращает кнопки для workspace раздела подписи"""
+        return self.top_window_()['Сводка затратGroupBox4']
