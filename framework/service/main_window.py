@@ -1,6 +1,6 @@
 import time
 
-from pywinauto import WindowSpecification, Desktop
+from pywinauto import WindowSpecification
 from pywinauto.controls.uiawrapper import UIAWrapper
 from pywinauto.controls.uia_controls import ToolbarWrapper
 
@@ -10,6 +10,10 @@ from framework.service.elements import statusbar, titlebar
 
 class MainWindow(WindowInterface):
     """Реализация главного окна приложения Адепт: УС"""
+    # идентификаторы для запуска окон в главном окне приложения
+    cost_summary = {'title': "Создать сводку затрат", 'control_type': "MenuItem"}
+    create_folder = {'title': "Создать папку", 'control_type': "MenuItem"}
+
     def __init__(self):
         super(MainWindow, self).__init__(
             titlebar_=titlebar.DefaultTitlebar(),
@@ -18,7 +22,8 @@ class MainWindow(WindowInterface):
 
     def menu(self) -> UIAWrapper:
         """Возвращает меню"""
-        return self.top_window_().child_window(title='Общее', control_type="MenuItem").parent().parent()
+        return self.top_window_().child_window(
+            title='Общее', control_type="MenuItem").parent().parent()
 
     def toolbar(self) -> ToolbarWrapper:
         """Возвращает панель инструментов"""
@@ -34,29 +39,16 @@ class MainWindow(WindowInterface):
         """Подключение к главному окну (верхний процесс в диспетчере задач)"""
         return self._connect().Dialog
 
-    def __launch_window_in_menu(self) -> WindowSpecification:
+    def launch_window_in_menu(self, name_window: dict) -> None:
         """Запуск окна (любого) через главное меню"""
         self.menu().menu_select('Общее->Создать')
         time.sleep(self.timeout / 2)
-        return self.__main_window()
+        self.__main_window().child_window(**name_window).click_input()
+        time.sleep(self.timeout)
 
-    def __launch_window_in_toolbar(self) -> WindowSpecification:
+    def launch_window_in_toolbar(self, name_window) -> None:
         """Запуск окна (любого) через панель инструментов"""
         self.toolbar().button('Создать').click_input()
         time.sleep(self.timeout * 2)
-        return self.__main_window()
-
-    def launch_window_create_folder_in_menu(self) -> None:
-        """Запуска окна 'Создание папки' через главное меню"""
-        self.__launch_window_in_menu().child_window(
-            title="Создать папку", control_type="MenuItem").click_input()
-
-    def launch_window_cost_summary_in_menu(self) -> None:
-        """Запуск окна 'Сводка затрат' через главное меню"""
-        self.__launch_window_in_menu().child_window(
-            title="Создать сводку затрат", control_type="MenuItem").click_input()
-
-    def launch_window_cost_summary_in_toolbar(self) -> None:
-        """Запуск окна 'Сводка затрат' через панель инструментов"""
-        self.__launch_window_in_toolbar().child_window(
-            title="Создать сводку затрат", control_type="MenuItem").click_input()
+        self.__main_window().child_window(**name_window).click_input()
+        time.sleep(self.timeout)

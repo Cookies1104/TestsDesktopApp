@@ -10,34 +10,26 @@ class TestWindowCostSummary:
     """Тесты окна 'Сводка затрат'"""
     @pytest.mark.positive
     @pytest.mark.parametrize(
-        'name_field,text,text_error', [
-            (CostSummary.field_number, '555', 'Позитивный тест текстового поля "номер" '
-                                              'в окне "Сводка затрат"'),
-            (CostSummary.field_create_date, '12.05.2022', 'Позитивный тест текстового поля "Дата'
-                                                          ' составления" в окне "Сводка затрат"'),
-            (CostSummary.field_situation, 'Сейчас',
-             'Позитивный тест текстового поля "Составлена в ценах по'
-             ' состоянию на" в окне "Сводка затрат"'),
-            (CostSummary.field_object, 'Объект', 'Позитивный тест текстового поля "Стройка"'
-                                                 ' в окне "Сводка затрат"'),
-            (CostSummary.field_customer, 'Заказчик', 'Позитивный тест текстового поля "Заказчик"'
-                                                     ' в окне "Сводка затрат"'),
-            (CostSummary.field_approved, '12.05.2022', 'Позитивный тест текстового поля '
-                                                       '"Утверждена" в окне "Сводка затрат"'),
-            (CostSummary.field_approval_document, 'приказ', 'Позитивный тест текстового поля '
-                                                            '"Документ об утверждении" в окне'
-                                                            ' "Сводка затрат"'),
+        'name_field,text', [
+            (CostSummary.field_number, '555'),
+            (CostSummary.field_create_date, '12.05.2022'),
+            (CostSummary.field_situation, 'Сейчас'),
+            (CostSummary.field_object, 'Объект'),
+            (CostSummary.field_customer, 'Заказчик'),
+            (CostSummary.field_approved, '12.05.2022'),
+            (CostSummary.field_approval_document, 'приказ'),
         ]
     )
     def test_positive_entry_for_fields_in_window_cost_summary(
-            self, window_cost_summary_in_menu, name_field, text, text_error,
+            self, window_cost_summary_in_menu, name_field, text,
     ):
         """Позитивный тест текстовых полей в окне сводка затрат"""
         field: EditWrapper = window_cost_summary_in_menu.get_edit_field(name_field)
         field.set_text(text)
 
-        assert field.is_visible(), text_error + '. Не видно'
-        assert field.is_editable(), text_error + '. Не редактируется'
+        text_error = f'Позитивный тест текстового поля {name_field} в окне "Сводка затрат"'
+        assert field.is_visible(), text_error + '. Поле не видно'
+        assert field.is_editable(), text_error + '. Поле не редактируется'
         assert text == field.get_value(), text_error
 
     @pytest.mark.positive
