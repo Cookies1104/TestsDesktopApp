@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 from pywinauto import WindowSpecification, Application
 from pywinauto.application import ProcessNotFoundError
-from pywinauto.controls.uia_controls import EditWrapper, ListItemWrapper
+from pywinauto.controls.uia_controls import EditWrapper
 from pywinauto.findwindows import ElementNotFoundError
 
-from framework.service.elements import statusbar, titlebar
+from framework.elements import statusbar, titlebar
 from settings import PATH_CLIENT, TIMEOUT
 
 
@@ -51,6 +51,10 @@ class WindowInterface(ABC):
             return self._app().connect(title_re='Адепт')
         except ElementNotFoundError:
             return self._app().connect(path=self.path_client, title='Dialog')
+
+    def _main_window(self) -> WindowSpecification:
+        """Подключение к главному окну (верхний процесс в диспетчере задач)"""
+        return self._connect().Dialog
 
     def top_window_(self) -> WindowSpecification:
         """Получение верхнего (активного) окна приложения."""

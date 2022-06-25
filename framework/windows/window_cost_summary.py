@@ -4,7 +4,7 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 from pywinauto import WindowSpecification
 
 from .base_window import WindowInterface
-from .elements import statusbar, titlebar
+from framework.elements import statusbar, titlebar
 
 
 # идентификаторы полей

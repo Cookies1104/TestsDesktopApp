@@ -1,7 +1,5 @@
-from pywinauto import WindowSpecification
-
 from .base_window import WindowInterface
-from .elements import statusbar, titlebar
+from framework.elements import statusbar, titlebar
 
 
 class CreateFolder(WindowInterface):

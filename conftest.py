@@ -3,10 +3,10 @@ import time
 
 from pywinauto import keyboard
 
-from framework.service.login_window import LoginWindow
-from framework.service.main_window import MainWindow
-from framework.service.window_cost_summary import CostSummary
-from framework.service.window_create_folder import CreateFolder
+from framework.windows.login_window import LoginWindow
+from framework.windows.main_window import MainWindow
+from framework.windows.window_cost_summary import CostSummary
+from framework.windows.window_create_folder import CreateFolder
 from settings import TIMEOUT
 
 
@@ -38,7 +38,7 @@ def window_create_folder_in_menu(main_window) -> CreateFolder:
 @pytest.fixture(scope='class')
 def window_cost_summary_in_menu(main_window) -> CostSummary:
     """Запуск окна 'Сводка затрат' через главное меню"""
-    main_window.launch_window_in_menu(MainWindow.cost_summary)
+    main_window.launch_window_in_menu(MainWindow.create_cost_summary)
     window = CostSummary()
     return window
 
@@ -46,7 +46,7 @@ def window_cost_summary_in_menu(main_window) -> CostSummary:
 @pytest.fixture(scope='class')
 def window_cost_summary_in_toolbar(main_window) -> CostSummary:
     """Запуск окна 'Сводка затрат' через панель инструментов"""
-    main_window.launch_window_in_toolbar(MainWindow.cost_summary)
+    main_window.launch_window_in_toolbar(MainWindow.create_cost_summary)
     time.sleep(TIMEOUT)
     window = CostSummary()
     return window

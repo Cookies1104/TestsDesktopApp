@@ -1,8 +1,8 @@
 from time import sleep
 
-from framework.service.base_window import WindowInterface
-from framework.service.elements.titlebar import DefaultTitlebar
-from framework.service.elements.statusbar import DefaultStatusbar
+from framework.windows.base_window import WindowInterface
+from framework.elements.titlebar import DefaultTitlebar
+from framework.elements.statusbar import DefaultStatusbar
 
 
 class LoginWindow(WindowInterface):

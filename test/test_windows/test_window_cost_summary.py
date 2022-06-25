@@ -3,7 +3,7 @@ import pytest
 from pywinauto import ElementNotFoundError
 from pywinauto.controls.uia_controls import EditWrapper, ListItemWrapper
 
-from framework.service.window_cost_summary import CostSummary
+from framework.windows import CostSummary
 
 
 class TestWindowCostSummary:
