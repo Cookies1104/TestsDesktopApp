@@ -22,7 +22,7 @@ class TestLaunchWindowsInToolbarInMainWindow:
     @pytest.mark.parametrize(**param)
     def test_launch_windows_in_toolbar_in_main_window(self, main_window_for_class,
                                                       name_window: dict, title: str):
-        """Тест запуска окна через панель ин    струментов в главном окне приложения"""
+        """Тест запуска окна через панель инструментов в главном окне приложения"""
         main_window_for_class.launch_window_in_toolbar(name_window)
         main_window_for_class.check_launch_window_in_main_window(title, 'панель инструментов')
 

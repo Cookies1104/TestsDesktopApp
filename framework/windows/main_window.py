@@ -62,8 +62,12 @@ class MainWindow(WindowInterface):
 
     def check_launch_window_in_main_window(self, title: str, where: str):
         """Проверка запущенного окна в главном меню"""
-        window = self.connect_()
-        text_error = f'Запуск окна "{title}" через {where} провалился'
+        try:
+            window = self.connect_(title_re=title)
+        except ElementNotFoundError:
+            window = self._connect_to_exe_file().top_window()
+
+        text_error = f'Запуск окна "{title}" через {where} провалился.'
 
         if title in str(window.wrapper_object()):
             assert window.is_visible() and window.is_enabled(), text_error
@@ -72,6 +76,6 @@ class MainWindow(WindowInterface):
             raise ElementNotFoundError(text_error)
         else:
             window.close()
-            raise ElementNotFoundError(text_error)
+            raise ElementNotFoundError(text_error + ' Название окна не совпадает.')
 
 
