@@ -15,13 +15,18 @@ class LoginWindow(WindowInterface):
 
     def titlebar(self):
         """Вызов titlebar"""
-        return self._titlebar.titlebar(self.top_window_())
+        return self._titlebar.titlebar(self.connect_())
 
     def statusbar(self):
         """Вызов statusbar (отсутствует)"""
         return None
 
+    def connect_(self, title_re='Соединение с'):
+        """Подключение к окну входа в приложение"""
+        return super(LoginWindow, self).connect_(title_re)
+
     def run_app(self):
         """Запуск приложения"""
+        self.close_app()
         self._app().start(cmd_line=self.path_client)
-        sleep(self.timeout * 2)
+        self.connect_()

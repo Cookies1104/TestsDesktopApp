@@ -7,20 +7,6 @@ from .base_window import WindowInterface
 from framework.elements import statusbar, titlebar
 
 
-# идентификаторы полей
-field_number = 'Номер:Edit'
-field_create_date = 'Дата составления:Edit'
-field_situation = 'Составлена в ценах по состоянию на:Edit'
-field_object = 'Стройка:Edit'
-field_customer = 'Заказчик:Edit'
-field_approved = 'Утверждена:Edit'
-field_approval_document = 'Документ об утверждении:Edit'
-
-combobox_customer = 'Заказчик:ComboBox'
-combobox_rounding_of_values = 'Округление стоимостей доComboBox'
-list_rounding_of_values = ['0', '1', '2', '3', '4', '5']
-
-
 class CostSummary(WindowInterface):
     """Элементы окна 'Сводка затрат'."""
     # идентификаторы полей
@@ -67,9 +53,13 @@ class CostSummary(WindowInterface):
     def statusbar(self):
         pass
 
+    def connect_(self, title_re='Сводка затрат') -> WindowSpecification:
+        """Подключение к окну сводка затрат"""
+        return super(CostSummary, self).connect_(title_re)
+
     def get_elements(self) -> ListViewWrapper:
         """Возвращает окно элементов"""
-        return self.top_window_()['Сводка затратListBox']
+        return self.connect_()['Сводка затратListBox']
 
     def get_element_general(self) -> ListItemWrapper:
         """Возвращает элемент 'Общие' (кликабелен)"""
@@ -83,18 +73,18 @@ class CostSummary(WindowInterface):
     # Методы для работы с разделом "Общие" в окне "Сводка затрат"
     def get_combobox_rounding_of_values(self) -> ComboBoxWrapper:
         """Возвращает выпадающий список Округление стоимостей до"""
-        return self.top_window_()[combobox_rounding_of_values]
+        return self.connect_()[CostSummary.combobox_rounding_of_values]
 
     def get_workspace_general(self) -> UIAWrapper | WindowSpecification:
         """Возвращает workspace для раздела общие"""
-        return self.top_window_().child_window(title="Номер:", control_type="Text").parent()
+        return self.connect_().child_window(title="Номер:", control_type="Text").parent()
 
     # -------------------------------------------------------------------.---------------------------
     # Методы для работы с разделом "Подписи" в окне "Сводка затрат"
     def get_workspace_signatures(self) -> UIAWrapper | WindowSpecification:
         """Возвращает workspace раздела подписи"""
-        return self.top_window_()['Сводка затратGroupBox4']
+        return self.connect_()['Сводка затратGroupBox4']
 
     def get_tree_for_workspace_signatures(self) -> TreeViewWrapper:
         """Возвращает дерево workspace раздела подписи"""
-        return self.top_window_()[CostSummary.tree_for_workspace_signatures]
+        return self.connect_()[CostSummary.tree_for_workspace_signatures]

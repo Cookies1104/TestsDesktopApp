@@ -1,8 +1,8 @@
 class TestLaunchLoginWindow:
     """Тесты по запуску окна входа в приложение"""
-    def test_launch_login_window(self, login_window):
+    def test_launch_login_window(self, login_window_for_class):
         """Тест запуска окна входа"""
-        window = login_window.top_window_()
+        window = login_window_for_class.connect_()
 
         assert window.is_visible() and window.is_enabled(), 'Окно входа не видно или не работает'
         assert window.exists() and 'Соединение с 127.0.0.1:21600' in str(window.wrapper_object()),\

@@ -40,38 +40,40 @@ class WindowInterface(ABC):
     def statusbar(self):
         pass
 
+    @abstractmethod
+    def connect_(self, title_re) -> WindowSpecification:
+        """Подключение к окну"""
+        window = self._connect_to_exe_file().connect(title_re=title_re).top_window()
+        window.wait('ready')
+        return window
+
     @staticmethod
     def _app() -> Application:
         """Инициализация приложения pywinauto"""
         return Application(backend='uia')
 
-    def _connect(self) -> Application:
-        """Подключение к приложению Адепт: УС (основной процесс в диспетчере задач)"""
-        try:
-            return self._app().connect(title_re='Адепт')
-        except ElementNotFoundError:
-            return self._app().connect(path=self.path_client, title='Dialog')
+    def _connect_to_exe_file(self) -> Application:
+        """Подключение к приложению Адепт, как к exe файлу"""
+        window = self._app().connect(path=self.path_client)
+        window.top_window().wait('ready')
+        return window
 
     def _main_window(self) -> WindowSpecification:
-        """Подключение к главному окну (верхний процесс в диспетчере задач)"""
-        return self._connect().Dialog
-
-    def top_window_(self) -> WindowSpecification:
-        """Получение верхнего (активного) окна приложения."""
-        window = self._connect().top_window()
+        """Подключение к главному окну приложения"""
+        window = self._connect_to_exe_file().Dialog
         window.wait('ready')
         return window
 
     def close_current_window(self) -> None:
         """Закрытие текущего (верхнего) окна как процесс в windows.
         Не работает для самого приложения."""
-        self.top_window_().close()
+        self._connect_to_exe_file().close()
 
     def close_app(self) -> None:
-        """Закрытие приложения"""
+        """Закрытие приложения через диспетчер задач"""
         while True:
             try:
-                self._connect().kill()
+                self._connect_to_exe_file().kill()
             except ElementNotFoundError:
                 break
             except ProcessNotFoundError:
@@ -84,7 +86,7 @@ class WindowInterface(ABC):
 
     def get_edit_field(self, name_field: str) -> EditWrapper:
         """Возвращает редактируемое поле EditWrapper"""
-        return self.top_window_()[name_field]
+        return self._connect_to_exe_file().top_window()[name_field]
 
     @staticmethod
     def get_text_for_edit_field(field: EditWrapper) -> str:

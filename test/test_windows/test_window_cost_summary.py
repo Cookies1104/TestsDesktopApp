@@ -3,7 +3,7 @@ import pytest
 from pywinauto import ElementNotFoundError
 from pywinauto.controls.uia_controls import EditWrapper, ListItemWrapper
 
-from framework.windows import CostSummary
+from framework.windows.window_cost_summary import CostSummary
 
 
 class TestWindowCostSummary:
@@ -76,7 +76,7 @@ class TestWindowCostSummary:
     )
     def test_element_in_window_cost_summary(self, window_cost_summary_in_menu, element):
         """Тест элементов в окне 'Сводка затрат'"""
-        element_window: ListItemWrapper = window_cost_summary_in_menu.top_window_(
+        element_window: ListItemWrapper = window_cost_summary_in_menu.connect_(
             ).child_window(**element)
 
         text_error = f'Элемент {element["title"]} в окне "Сводка затрат" '
