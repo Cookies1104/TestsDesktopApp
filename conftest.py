@@ -19,16 +19,11 @@ def launch_login_window() -> LoginWindow:
 
 def launch_main_window() -> MainWindow:
     """Запуск главного окна"""
-    keyboard.send_keys('{ENTER}')
-    time.sleep(TIMEOUT)
-    return MainWindow()
-
-
-@pytest.fixture(scope='session')
-def login_window_for_session() -> LoginWindow:
-    window = launch_login_window()
-    yield window
-    window.close_app()
+    login_window = launch_login_window()
+    login_window.get_button_login().click()
+    window = MainWindow(app_=login_window.app)
+    window.connect_()
+    return window
 
 
 @pytest.fixture(scope='class')
@@ -38,24 +33,9 @@ def login_window_for_class() -> LoginWindow:
     window.close_app()
 
 
-@pytest.fixture(scope='session')
-def main_window_for_session(login_window_for_session) -> MainWindow:
-    """Запуск главного окна"""
-    window = launch_main_window()
-    yield window
-    window.close_app()
-
-
 @pytest.fixture(scope='class')
-def main_window_for_class(login_window_for_class) -> MainWindow:
+def main_window_for_class() -> MainWindow:
     """Запуск главного окна"""
-    window = launch_main_window()
-    yield window
-    window.close_app()
-
-
-@pytest.fixture(scope='function')
-def main_window_for_function() -> MainWindow:
     window = launch_main_window()
     yield window
     window.close_app()
