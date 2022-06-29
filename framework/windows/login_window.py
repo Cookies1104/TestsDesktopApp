@@ -24,9 +24,3 @@ class LoginWindow(WindowInterface):
     def connect_(self, title_re='Соединение с'):
         """Подключение к окну входа в приложение"""
         return super(LoginWindow, self).connect_(title_re)
-
-    def run_app(self):
-        """Запуск приложения"""
-        self.close_app()
-        self._app().start(cmd_line=self.path_client)
-        self.connect_()

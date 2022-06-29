@@ -1,9 +1,11 @@
+import time
 from abc import ABC, abstractmethod
 from pywinauto import WindowSpecification, Application
 from pywinauto.application import ProcessNotFoundError
 from pywinauto.controls.uia_controls import EditWrapper
 from pywinauto.findwindows import ElementNotFoundError
 
+import settings
 from framework.elements import statusbar, titlebar
 from settings import PATH_CLIENT, TIMEOUT
 
@@ -30,7 +32,32 @@ class WindowInterface(ABC):
 
         # передаём настройки для работы с приложением
         self.timeout = timeout
+        self.backend = settings.BACKEND
         self.path_client = PATH_CLIENT
+        self.app: Application
+
+    def __app(self) -> Application:
+        """Абстрактное приложение с нужным нам бекэндом"""
+        return Application(backend=self.backend)
+
+    def _connect_to_exe_file(self) -> Application:
+        """Подключение к приложению Адепт, как к exe файлу"""
+        return self.__app().connect(path=self.path_client)
+
+    def close_app(self) -> None:
+        """Закрытие приложения через диспетчер задач"""
+        while True:
+            try:
+                self._connect_to_exe_file().kill()
+            except (ElementNotFoundError, ProcessNotFoundError):
+                break
+
+    def run_app(self) -> None:
+        """Запуск приложения"""
+        self.close_app()
+        self.__app().start(cmd_line=self.path_client)
+        self.app = self._connect_to_exe_file()
+        self.app.window().wait('ready')
 
     @abstractmethod
     def titlebar(self):
@@ -42,42 +69,30 @@ class WindowInterface(ABC):
 
     @abstractmethod
     def connect_(self, title_re) -> WindowSpecification:
-        """Подключение к окну"""
-        window = self._connect_to_exe_file().connect(title_re=title_re).top_window()
-        window.wait('ready')
-        return window
-
-    @staticmethod
-    def _app() -> Application:
-        """Инициализация приложения pywinauto"""
-        return Application(backend='uia')
-
-    def _connect_to_exe_file(self) -> Application:
-        """Подключение к приложению Адепт, как к exe файлу"""
-        window = self._app().connect(path=self.path_client)
-        window.top_window().wait('ready')
-        return window
-
-    def _main_window(self) -> WindowSpecification:
-        """Подключение к главному окну приложения"""
-        window = self._connect_to_exe_file().Dialog
-        window.wait('ready')
-        return window
-
-    def close_current_window(self) -> None:
-        """Закрытие текущего (верхнего) окна как процесс в windows.
-        Не работает для самого приложения."""
-        self._connect_to_exe_file().close()
-
-    def close_app(self) -> None:
-        """Закрытие приложения через диспетчер задач"""
+        """Подключение к окну соответствующей сущности"""
+        x = 0
         while True:
             try:
-                self._connect_to_exe_file().kill()
+                x += 1
+                window = self.app.window(title_re=title_re)
+                window.wait('ready')
+                return window
             except ElementNotFoundError:
-                break
-            except ProcessNotFoundError:
-                break
+                if x == 29:
+                    self.close_app()
+                    break
+                time.sleep(self.timeout)
+
+    # def _main_window(self) -> WindowSpecification:
+    #     """Подключение к главному окну приложения"""
+    #     window = self._connect_to_exe_file().Dialog
+    #     window.wait('ready')
+    #     return window
+
+    # def close_current_window(self) -> None:
+    #     """Закрытие текущего (верхнего) окна как процесс в windows.
+    #     Не работает для самого приложения."""
+    #     self._connect_to_exe_file().close()
 
     @staticmethod
     def clear_edit_field(field: EditWrapper) -> None:
