@@ -34,7 +34,7 @@ class WindowInterface(ABC):
         self.timeout = timeout
         self.backend = settings.BACKEND
         self.path_client = PATH_CLIENT
-        self.app: Application
+        self.app: Application | None = None
 
     def __app(self) -> Application:
         """Абстрактное приложение с нужным нам бекэндом"""
@@ -82,17 +82,6 @@ class WindowInterface(ABC):
                     self.close_app()
                     break
                 time.sleep(self.timeout)
-
-    # def _main_window(self) -> WindowSpecification:
-    #     """Подключение к главному окну приложения"""
-    #     window = self._connect_to_exe_file().Dialog
-    #     window.wait('ready')
-    #     return window
-
-    # def close_current_window(self) -> None:
-    #     """Закрытие текущего (верхнего) окна как процесс в windows.
-    #     Не работает для самого приложения."""
-    #     self._connect_to_exe_file().close()
 
     @staticmethod
     def clear_edit_field(field: EditWrapper) -> None:

@@ -1,8 +1,6 @@
 import pytest
 import time
 
-from pywinauto import keyboard
-
 from framework.windows.login_window import LoginWindow
 from framework.windows.main_window import MainWindow
 from framework.windows.window_cost_summary import CostSummary
