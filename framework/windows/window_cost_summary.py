@@ -1,7 +1,7 @@
 from pywinauto.controls.uia_controls import ComboBoxWrapper, ListItemWrapper, \
     ListViewWrapper, TreeViewWrapper
 from pywinauto.controls.uiawrapper import UIAWrapper
-from pywinauto import WindowSpecification
+from pywinauto import WindowSpecification, Application
 
 from .base_window import WindowInterface
 from framework.elements import statusbar, titlebar
@@ -39,11 +39,12 @@ class CostSummary(WindowInterface):
     button_clear = {'title': 'Очистить', 'control_type': 'Button'}
     tree_for_workspace_signatures = 'Сводка затратTreeView'
 
-    def __init__(self):
+    def __init__(self, app_: Application):
         super(CostSummary, self).__init__(
             titlebar_=titlebar.DefaultTitlebar(),
             statusbar_=statusbar.DefaultStatusbar(),
             )
+        self.app = app_
 
     # ----------------------------------------------------------------------------------------------
     # Общие методы для всех разделов в окне "Сводка затрат"

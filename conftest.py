@@ -43,16 +43,19 @@ def main_window_for_class() -> MainWindow:
 
 @pytest.fixture(scope='class')
 def window_create_folder_in_menu(main_window_for_class) -> CreateFolder:
-    main_window_for_class.launch_window_in_menu(MainWindow.create_folder)
-    window = CreateFolder()
+    main_window_for_class.launch_context_menu_for_creating_entities_in_menu(
+        MainWindow.create_folder)
+    window = CreateFolder(app_=main_window_for_class.app)
+    window.connect_()
     return window
 
 
 @pytest.fixture(scope='class')
 def window_cost_summary_in_menu(main_window_for_class) -> CostSummary:
     """Запуск окна 'Сводка затрат' через главное меню"""
-    main_window_for_class.launch_window_in_menu(MainWindow.create_cost_summary)
-    window = CostSummary()
+    main_window_for_class.launch_context_menu_for_creating_entities_in_menu(
+        MainWindow.create_cost_summary)
+    window = CostSummary(app_=main_window_for_class.app)
     window.connect_()
     return window
 
@@ -62,7 +65,8 @@ def window_cost_summary_in_toolbar(main_window_for_class) -> CostSummary:
     """Запуск окна 'Сводка затрат' через панель инструментов"""
     main_window_for_class.launch_window_in_toolbar(MainWindow.create_cost_summary)
     time.sleep(TIMEOUT)
-    window = CostSummary()
+    window = CostSummary(app_=main_window_for_class.app)
+    window.connect_()
     return window
 
 
