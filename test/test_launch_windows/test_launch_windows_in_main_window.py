@@ -35,5 +35,5 @@ class TestLaunchWindowsInMenuInMainWindow:
     def test_launch_windows_in_menu_in_main_window(self, main_window_for_class, name_window,
                                                    title):
         """Тест запуска окна через меню в главном окне приложения"""
-        main_window_for_class.launch_window_in_menu(name_window)
+        main_window_for_class.launch_context_menu_for_creating_entities_in_menu(name_window)
         main_window_for_class.check_launch_window_in_main_window(title, 'меню')
