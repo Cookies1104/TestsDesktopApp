@@ -1,6 +1,6 @@
 from pywinauto import Application, keyboard, WindowSpecification
 from pywinauto.controls.uiawrapper import UIAWrapper
-from pywinauto.controls.uia_controls import ToolbarWrapper, TreeViewWrapper
+from pywinauto.controls.uia_controls import ToolbarWrapper, TreeViewWrapper, MenuWrapper
 from pywinauto.findwindows import ElementNotFoundError
 
 from framework.windows.base_window import WindowInterface
@@ -27,10 +27,6 @@ class MainWindow(WindowInterface):
             statusbar_=statusbar.DefaultStatusbar(),
         )
         self.app = app_
-
-    def tree(self) -> TreeViewWrapper:
-        """Возвращает дерево"""
-        pass
 
     def titlebar(self):
         return self._titlebar.titlebar(self.connect_())
@@ -60,11 +56,7 @@ class MainWindow(WindowInterface):
         self.connect_()
         self.menu().menu_select('Общее->Создать')
         context_menu = self.app.window(title_re=MainWindow.title)
-
-        try:
-            context_menu.child_window(**name_window).click_input()
-        except ElementNotFoundError:
-            keyboard.send_keys('{ESC} {ESC}')
+        context_menu.child_window(**name_window).click_input()
 
     # ----------------------------------------------------------------------------------------------
     # Методы для работы с панелью инструментов
@@ -81,15 +73,32 @@ class MainWindow(WindowInterface):
     def launch_window_in_toolbar(self, name_window) -> None:
         """Запуск окна (любого) через панель инструментов"""
         context_menu = self.launch_context_menu_for_creating_entities_in_toolbar()
-        try:
-            context_menu.child_window(**name_window).click_input()
-        except ElementNotFoundError:
-            keyboard.send_keys('{ESC}')
+        context_menu.child_window(**name_window).click_input()
 
     # ----------------------------------------------------------------------------------------------
     # Методы для работы с деревом в панели инструментов
+    def tree(self) -> TreeViewWrapper:
+        """Возвращает дерево"""
+        return self.connect_().child_window(
+            auto_id="MainWindowUI.centralwidget.mainVerticalSplitter.swTopSmetaAndTree.smetaPage."
+                    "topHorizontalSplitter.leftTopBox", control_type="Custom").TreeView
+
+    def launch_context_menu_for_tree(self) -> WindowSpecification:
+        """Запуск контекстного меню для дерева (ПКМ по средине окна)"""
+        self.tree().click_input(button='right')
+        return self.connect_(title_re='adept_us')
+
+    def launch_context_menu_for_creating_entities_in_tree(self) -> MenuWrapper:
+        """Запуск контекстного меню создания сущностей через дерево"""
+        self.launch_context_menu_for_tree().child_window(
+            title="Создать", control_type="MenuItem").click_input()
+        context_menu = self.connect_(title_re='adept_us').Menu
+        return context_menu
+
     def launch_window_in_tree(self, name_window) -> None:
-        pass
+        """Запуск окна (любого) через дерево"""
+        context_menu = self.launch_context_menu_for_creating_entities_in_tree()
+        context_menu.item_by_path(f'{name_window["title"]}').click_input()
 
     # ----------------------------------------------------------------------------------------------
     # Остальные методы

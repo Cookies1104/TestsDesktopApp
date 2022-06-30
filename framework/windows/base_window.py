@@ -77,7 +77,7 @@ class WindowInterface(ABC):
                 window = self.app.window(title_re=title_re)
                 window.wait('ready')
                 return window
-            except ElementNotFoundError:
+            except (ElementNotFoundError, TimeoutError):
                 if x == 29:
                     self.close_app()
                     break

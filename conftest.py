@@ -39,6 +39,14 @@ def main_window_for_class() -> MainWindow:
     window.close_app()
 
 
+@pytest.fixture(scope='function')
+def main_window_for_function() -> MainWindow:
+    """Запуск главного окна"""
+    window = launch_main_window()
+    yield window
+    window.close_app()
+
+
 @pytest.fixture(scope='class')
 def window_create_folder_in_menu(main_window_for_class) -> CreateFolder:
     main_window_for_class.launch_context_menu_for_creating_entities_in_menu(
