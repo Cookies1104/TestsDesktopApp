@@ -54,9 +54,11 @@ class CostSummary(WindowInterface):
     def statusbar(self):
         pass
 
-    def connect_(self, title_re='Сводка затрат') -> WindowSpecification:
+    def connect_(self, **kwargs):
         """Подключение к окну сводка затрат"""
-        return super(CostSummary, self).connect_(title_re)
+        if kwargs:
+            return super(CostSummary, self).connect_(**kwargs)
+        return super(CostSummary, self).connect_(title_re='Сводка затрат')
 
     def get_elements(self) -> ListViewWrapper:
         """Возвращает окно элементов"""

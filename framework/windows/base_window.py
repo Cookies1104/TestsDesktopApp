@@ -68,13 +68,13 @@ class WindowInterface(ABC):
         pass
 
     @abstractmethod
-    def connect_(self, title_re) -> WindowSpecification:
+    def connect_(self, **kwargs) -> WindowSpecification:
         """Подключение к окну соответствующей сущности"""
         x = 0
         while True:
             try:
                 x += 1
-                window = self.app.window(title_re=title_re)
+                window = self.app.window(**kwargs)
                 window.wait('ready')
                 return window
             except (ElementNotFoundError, TimeoutError):

@@ -18,5 +18,7 @@ class CreateFolder(WindowInterface):
     def statusbar(self):
         pass
 
-    def connect_(self, title_re='Создание папки'):
-        return super(CreateFolder, self).connect_(title_re=title_re)
+    def connect_(self, **kwargs):
+        if kwargs:
+            return super(CreateFolder, self).connect_(**kwargs)
+        return super(CreateFolder, self).connect_(title_re='Создание папки')

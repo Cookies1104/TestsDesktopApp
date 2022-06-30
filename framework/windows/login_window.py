@@ -24,9 +24,11 @@ class LoginWindow(WindowInterface):
         """Вызов statusbar (отсутствует)"""
         return None
 
-    def connect_(self, title_re='Соединение с'):
+    def connect_(self, **kwargs):
         """Подключение к окну входа в приложение"""
-        return super(LoginWindow, self).connect_(title_re)
+        if kwargs:
+            return super(LoginWindow, self).connect_(**kwargs)
+        return super(LoginWindow, self).connect_(title_re='Соединение с')
 
     def get_button_login(self) -> ButtonWrapper:
         """Получаем кнопку 'Логин'"""

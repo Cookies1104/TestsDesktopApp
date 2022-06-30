@@ -34,8 +34,10 @@ class MainWindow(WindowInterface):
     def statusbar(self):
         return self._statusbar.statusbar()
 
-    def connect_(self, title_re=title):
-        return super(MainWindow, self).connect_(title_re)
+    def connect_(self, **kwargs):
+        if kwargs:
+            return super(MainWindow, self).connect_(**kwargs)
+        return super(MainWindow, self).connect_(title_re=MainWindow.title, **kwargs)
 
     # ----------------------------------------------------------------------------------------------
     # Методы для работы с меню
@@ -68,7 +70,7 @@ class MainWindow(WindowInterface):
         """Запуск контекстного меню создания сущностей в панели инструментов"""
         self.connect_()
         self.toolbar().button('Создать').click_input()
-        return self.connect_(title_re='adept_us')
+        return self.connect_()
 
     def launch_window_in_toolbar(self, name_window) -> None:
         """Запуск окна (любого) через панель инструментов"""
@@ -86,13 +88,13 @@ class MainWindow(WindowInterface):
     def launch_context_menu_for_tree(self) -> WindowSpecification:
         """Запуск контекстного меню для дерева (ПКМ по средине окна)"""
         self.tree().click_input(button='right')
-        return self.connect_(title_re='adept_us')
+        return self.connect_()
 
     def launch_context_menu_for_creating_entities_in_tree(self) -> MenuWrapper:
         """Запуск контекстного меню создания сущностей через дерево"""
         self.launch_context_menu_for_tree().child_window(
             title="Создать", control_type="MenuItem").click_input()
-        context_menu = self.connect_(title_re='adept_us').Menu
+        context_menu = self.connect_().Menu
         return context_menu
 
     def launch_window_in_tree(self, name_window) -> None:
@@ -105,7 +107,7 @@ class MainWindow(WindowInterface):
     def check_launch_window_in_main_window(self, title: str, where: str):
         """Проверка запущенного окна в главном меню"""
         try:
-            window = self.connect_(title_re=title)
+            window = self.connect_()
         except ElementNotFoundError:
             window = self._connect_to_exe_file().top_window()
 
