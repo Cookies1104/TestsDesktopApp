@@ -1,6 +1,7 @@
 from pywinauto import Application, keyboard, WindowSpecification
 from pywinauto.controls.uiawrapper import UIAWrapper
-from pywinauto.controls.uia_controls import ToolbarWrapper, TreeViewWrapper, MenuWrapper
+from pywinauto.controls.uia_controls import ToolbarWrapper, TreeViewWrapper, MenuWrapper, \
+    TreeItemWrapper
 from pywinauto.findwindows import ElementNotFoundError
 
 from framework.windows.base_window import WindowInterface
@@ -78,12 +79,16 @@ class MainWindow(WindowInterface):
         context_menu.child_window(**name_window).click_input()
 
     # ----------------------------------------------------------------------------------------------
-    # Методы для работы с деревом в панели инструментов
+    # Методы для работы с деревом сущностей
     def tree(self) -> TreeViewWrapper:
         """Возвращает дерево"""
         return self.connect_().child_window(
             auto_id="MainWindowUI.centralwidget.mainVerticalSplitter.swTopSmetaAndTree.smetaPage."
                     "topHorizontalSplitter.leftTopBox", control_type="Custom").TreeView
+
+    def get_archive(self) -> TreeItemWrapper:
+        """Возвращает архив в дереве сущностей"""
+        return self.tree().get_item(path=r'\Архив')
 
     def launch_context_menu_for_tree(self) -> WindowSpecification:
         """Запуск контекстного меню для дерева (ПКМ по средине окна)"""
