@@ -2,7 +2,7 @@ import time
 from abc import ABC, abstractmethod
 from pywinauto import WindowSpecification, Application
 from pywinauto.application import ProcessNotFoundError
-from pywinauto.controls.uia_controls import EditWrapper
+from pywinauto.controls.uia_controls import EditWrapper, MenuWrapper
 from pywinauto.findwindows import ElementNotFoundError
 
 import settings
@@ -13,6 +13,7 @@ from settings import PATH_CLIENT, TIMEOUT
 class WindowInterface(ABC):
     """Интерфейс для реализации окон клиента Адепт"""
     _instance = None  # для реализации Singleton
+    context_menu = 'adept_us'
 
     def __new__(cls, *args, **kwargs):
         """Реализация Singleton для фасада."""
@@ -58,6 +59,14 @@ class WindowInterface(ABC):
         self.__app().start(cmd_line=self.path_client)
         self.app = self._connect_to_exe_file()
         self.app.window().wait('ready')
+
+    def get_context_menu_for_element_menu(self, **kwargs) -> WindowSpecification | MenuWrapper:
+        """Подключаемся к предварительно запущенному контекстному меню и запускаем элемент,
+        который содержит в себе следующий уровень меню"""
+        element_for_context_menu = self.connect_(title=WindowInterface.context_menu).child_window(
+            **kwargs)
+        element_for_context_menu.click_input()
+        return element_for_context_menu.Menu
 
     @abstractmethod
     def titlebar(self):
