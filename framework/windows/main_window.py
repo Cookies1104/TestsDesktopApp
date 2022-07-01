@@ -1,4 +1,4 @@
-from pywinauto import Application, keyboard, WindowSpecification
+from pywinauto import Application, WindowSpecification
 from pywinauto.controls.uiawrapper import UIAWrapper
 from pywinauto.controls.uia_controls import ToolbarWrapper, TreeViewWrapper, MenuWrapper, \
     TreeItemWrapper
@@ -13,6 +13,7 @@ class MainWindow(WindowInterface):
     # идентификаторы для запуска окон в главном окне приложения
     title = 'Адепт:УC'
 
+    # идентификаторы контекстного меню для создания сущностей
     create_folder = {'title': "Создать папку", 'control_type': "MenuItem"}
     create_subfolder = {'title': "Создать подпапку", 'control_type': "MenuItem"}
     create_object = {'title': "Создать стройку", 'control_type': "MenuItem"}
@@ -21,6 +22,11 @@ class MainWindow(WindowInterface):
     create_summary_estimate = {'title': "Создать Св.смету", 'control_type': "MenuItem"}
     create_cost_summary = {'title': "Создать сводку затрат", 'control_type': "MenuItem"}
     create_calculation = {'title': "Создать калькуляцию", 'control_type': "MenuItem"}
+
+    # идентификаторы контекстного меню при нажатии ПКМ по архиву в дереве сущностей
+    archive_create = {'title': "Создать", 'control_type': "MenuItem"}
+    archive_download_from_file = {'title': "Загрузить из файла", 'control_type': "MenuItem"}
+    archive_clear = {'title': "Очистить", 'control_type': "MenuItem"}
 
     def __init__(self, app_: Application):
         super(MainWindow, self).__init__(
@@ -42,7 +48,7 @@ class MainWindow(WindowInterface):
 
     # ----------------------------------------------------------------------------------------------
     # Методы для работы с меню
-    def menu(self) -> UIAWrapper:
+    def menu(self) -> WindowSpecification | UIAWrapper:
         """Возвращает меню для возможности вызова метода menu_select()"""
         return self.connect_().child_window(
             title='Общее', control_type="MenuItem").parent().parent()
@@ -51,7 +57,8 @@ class MainWindow(WindowInterface):
         """Запуск контекстного меню "Общее" через меню"""
         self.connect_()
         self.menu().menu_select('Общее')
-        context_menu = self.app.window(title_re=MainWindow.title).child_window()
+        context_menu = self.app.window(title_re=MainWindow.title).child_window(
+            title="Поиск элементов", control_type="MenuItem").parent()
         return context_menu
 
     def launch_context_menu_for_creating_entities_in_menu(self, name_window: dict) -> None:
@@ -80,22 +87,28 @@ class MainWindow(WindowInterface):
 
     # ----------------------------------------------------------------------------------------------
     # Методы для работы с деревом сущностей
-    def tree(self) -> TreeViewWrapper:
+    def tree(self) -> WindowSpecification | TreeViewWrapper:
         """Возвращает дерево"""
         return self.connect_().child_window(
             auto_id="MainWindowUI.centralwidget.mainVerticalSplitter.swTopSmetaAndTree.smetaPage."
                     "topHorizontalSplitter.leftTopBox", control_type="Custom").TreeView
 
-    def get_archive(self) -> TreeItemWrapper:
+    def get_archive_in_entity_tree(self) -> WindowSpecification | TreeItemWrapper:
         """Возвращает архив в дереве сущностей"""
         return self.tree().get_item(path=r'\Архив')
+
+    def get_context_menu_for_archive_in_entity_tree(self) -> WindowSpecification | UIAWrapper:
+        """Запускает и возвращает контекстное меню для архива в дереве"""
+        self.get_archive_in_entity_tree().click_input(button='right')
+        return self.connect_(title='adept_us')
 
     def launch_context_menu_for_tree(self) -> WindowSpecification:
         """Запуск контекстного меню для дерева (ПКМ по средине окна)"""
         self.tree().click_input(button='right')
         return self.connect_()
 
-    def launch_context_menu_for_creating_entities_in_tree(self) -> MenuWrapper:
+    def launch_context_menu_for_creating_entities_in_tree(
+            self) -> WindowSpecification | MenuWrapper:
         """Запуск контекстного меню создания сущностей через дерево"""
         self.launch_context_menu_for_tree().child_window(
             title="Создать", control_type="MenuItem").click_input()
