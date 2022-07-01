@@ -102,6 +102,14 @@ class MainWindow(WindowInterface):
         self.get_archive_in_entity_tree().click_input(button='right')
         return self.connect_(title='adept_us')
 
+    def get_context_menu_for_element_create_in_archive_entity_tree(
+            self) -> WindowSpecification | MenuWrapper:
+        """Подключается к предварительно запущенному контекстному меню архива 1 уровня и возвращает
+        контекстное меню для элемента 'Создать'"""
+        context_menu = self.connect_(title='adept_us').child_window(**MainWindow.archive_create)
+        context_menu.click_input()
+        return context_menu.Menu
+
     def launch_context_menu_for_tree(self) -> WindowSpecification:
         """Запуск контекстного меню для дерева (ПКМ по средине окна)"""
         self.tree().click_input(button='right')
